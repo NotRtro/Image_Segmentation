@@ -6,7 +6,7 @@ import requests
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a48a13b2a21f410aa53641279dd9bfcad9d15761f4724e68'
 ##client = APIClient(DISCORD_TOKEN)
-TOKEN = 'MTE1MTIwMzgzODQ3NzQ3MTg2NQ.G6lJ74.DYIHb-gSIGlujfWDTOwun3_36UAn5wFZtsHSJA'
+TOKEN = TOKEN
 
 @app.route('/')
 def homepage():
