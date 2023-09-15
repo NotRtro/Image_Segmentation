@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,28 +25,26 @@
     integrity="sha384-B4gt1jrGC73h4AgTPSdUtoBvf08shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" 
     crossorigin= "anonymous"
     ></script>
-    <title>Segmentation-Image</title>
+    <title>DashBoard</title>
 </head>
-    <body>
-        <style>
-            .btn-container{
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-            h1{
-                position: absolute;
-                top: 40%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-        </style>
-        <h1>Click here to login</h1>
-        <div class="btn-container">
-            <button class="btn-lg btn-outline-primary">
-                <a href={{url}} style="color: white">login</a>
-            </button>
-        </div>
-    </body>
+<body>
+    <style>
+        .center{
+            position: absolute;
+            top : 50%;
+            left : 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        img{
+            border-radius: 50%;
+        }
+    </style>
+    <div class="center">
+        <p><b>{{user.username}}</b>#{{user.discriminator}}</p>
+        <p><b>ID-> </b>{{user.id}}</p>
+        <p><b>Locale-> </b>{{user.locale}}</p>
+        <img src="{{user.avatar_url}}" alt="My avatar" height="200"/>
+    </div>
+</body>
 </html>
