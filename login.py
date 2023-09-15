@@ -2,11 +2,12 @@ from zenora import APIClient
 from flask import Flask, render_template, request, session, redirect
 from config import *
 import requests
+import zenora
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'a48a13b2a21f410aa53641279dd9bfcad9d15761f4724e68'
 ##client = APIClient(DISCORD_TOKEN)
-TOKEN = TOKEN
+#TOKEN = TOKEN
 
 @app.route('/')
 def homepage():
@@ -29,9 +30,8 @@ def callback():
     r = requests.post(f'https://discord.com/api/v10/oauth2/token', data=data, headers=headers)
     r.raise_for_status()
     session['token'] = r.json()['access_token']
-    client = APIClient(token=session['token'])
-    me = client.users.get_current_user()
-    return render_template('dashboard.html', user=me)
+
+    return redirect('/dashboard')
 
 @app.route('/dashboard')
 def dashboard():
@@ -44,6 +44,12 @@ def dashboard():
     bearer_client = APIClient(access_token, bearer=True)
     me = bearer_client.get_current_user()
     """
+    token = 'null'
+
+    if session.get('access_token'):
+        token = session['access_token']
+
+    return render_template('dashboard.html', user=token)
 
     
 
