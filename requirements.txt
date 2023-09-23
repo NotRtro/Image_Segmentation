@@ -1,0 +1,3 @@
+Flask==2.3.3
+Zenora==0.0.3.post1
+#requests
