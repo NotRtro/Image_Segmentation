@@ -1,4 +1,8 @@
+
+#AGREGAR LAS CARPETAS QUE QUEREMOS IGNORAR
 venv
 env
 ver
 vir
+.vscode
+__pycache__
