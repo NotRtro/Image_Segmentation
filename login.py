@@ -2,20 +2,18 @@ import os
 import pathlib
 
 import requests
-from flask import Flask, session, abort, redirect, request
+from flask import Flask, session, abort, redirect, request, render_template
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests
-import json
-
 
 app = Flask("Google Login App")
 app.secret_key = "CodeSpecialist.com"
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-GOOGLE_CLIENT_ID = "usea a code"
+GOOGLE_CLIENT_ID = ""
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 
 flow = Flow.from_client_secrets_file(
@@ -26,7 +24,7 @@ flow = Flow.from_client_secrets_file(
 
 
 def login_is_required(function):
-    def wrapper():
+    def wrapper(*args, **kwargs):
         if "google_id" not in session:
             return abort(401)  # Authorization required
         else:
@@ -59,13 +57,11 @@ def callback():
         request=token_request,
         audience=GOOGLE_CLIENT_ID
     )
-    print(id_info)
+
     session["google_id"] = id_info.get("sub")
     session["name"] = id_info.get("name")
-    session["email"] = id_info.get("email")
-    session["picture"] = id_info.get("picture")
-    session["locale"] = id_info.get("locale")
     return redirect("/protected_area")
+    
 
 
 @app.route("/logout")
@@ -82,8 +78,6 @@ def index():
 @app.route("/protected_area")
 @login_is_required
 def protected_area():
-    return f"Hello {session['name']} <img src = {session['picture']}/><br/> <a href='/logout'><button>Logout</button></a>"
+    return f"Hello {session['name']}! <br/> <a href='/logout'><button>Logout</button></a>"
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
