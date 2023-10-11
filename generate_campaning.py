@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 import openai
 from login import app
 
-openai.api_key = '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'
+openai.api_key = ''
 conversations = []
 
 @app.route('/final', methods = ['GET', 'POST'])
