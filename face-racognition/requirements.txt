@@ -1,0 +1,10 @@
+sagemaker
+scikit-learn
+pandas
+numpy
+ipykernel
+flask
+flask-bootstrap
+flask-wtf
+flask-testing
+deepface
