@@ -6,7 +6,7 @@ from deepface import DeepFace
 
 index = 0
 img = "elite.jpg"
-faces = RetinaFace.extract_faces(img_path=img, align=True)
+faces = RetinaFace.extract_faces(img_path=img, align=False)
 persons ={}
 
 for face in faces:

@@ -1,19 +1,9 @@
-import boto3
+import pymongo
 
+# Conecta a la base de datos MongoDB (si no existe, se creará automáticamente)
+client = pymongo.MongoClient("mongodb://localhost:27017/")  # Cambia la URL según tu configuración
 
-dynamodb = boto3.client('dynamodb')
+# Selecciona una base de datos (si no existe, se creará automáticamente)
+db = client["BDGeneral"]  # Reemplaza "mi_base_de_datos" por el nombre que desees
 
-table_user = 'TableUsers'
-table_campa = 'TableCampa'
-table_pictures = 'TablePictures'
-table_ = 'TableStadistics'
-
-
-def UpdateTable(Item, TableName=None):
-    dynamodb.put_item(
-        TableName=TableName,
-        Item = Item
-    )
-    
-
-
+# Ahora puedes interactuar con tu base de datos.

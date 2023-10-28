@@ -1,9 +1,8 @@
 from deepface import DeepFace
 import cv2
-from retinaface import RetinaFace
     
 
-img = "nigga.jpeg"
+img = "olivares.jpg"
 
 # Configura enforce_detection a False para evitar errores si no se detecta una cara
 analisis = DeepFace.analyze(img_path=img, actions=["gender", "emotion", "age","race"], enforce_detection=False)
