@@ -1,0 +1,22 @@
+{
+usu            "_id":id,
+            "first_name":first_name,
+            "last_name":last_name,
+            "email":email,
+            "picture":picture
+}
+
+
+{campañas
+    id:creciente
+    usua_id:
+    camapaña_info: varchar[2000]
+}
+
+
+{imagenes
+    id_img: creciend
+    vec_img:
+    usur_id:
+}
+
