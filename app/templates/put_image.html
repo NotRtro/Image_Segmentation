@@ -8,11 +8,10 @@
 <body>
     <h1>Subir y Analizar Imagen</h1>
 
-    <form id="upload" enctype="multipart/form-data">
+    <form action="{{url_for('analyze')}}" method="post" >
         <label for="imagen">Selecciona una imagen:</label>
-        <input type="file" id="imagen" name="imagen" accept="image/*">
-
-        <input type="button" value="Upload">
+        <input type="file" id="image" name="image" accept="image/*">
+        <button>enviar</button>
     </form>
 </body>
 </html>

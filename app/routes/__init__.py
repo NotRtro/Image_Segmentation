@@ -1,30 +1,24 @@
-import os
-import pathlib
-#from main import *
+from flask import request, jsonify, render_template, session,abort, redirect,url_for
+from contro_mongo import *
+
+"""para login"""
 import requests
-from flask import Flask,session, abort, redirect, request, render_template
 from google.oauth2 import id_token
-from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
-from src.backend.contro_mongo import * #data base
-#from face import *
 import google.auth.transport.requests
+from app import app, GOOGLE_CLIENT_ID,client_secrets_file,flow
+"""cierre"""
 
-app = Flask("Google Login App")
-app.secret_key = "CodeSpecialist.com"
+"""Para face"""
+from deepface import DeepFace
+import cv2
+import numpy as np
+import base64
+import io
+"""cierre"""
 
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
-
-GOOGLE_CLIENT_ID = "1053211312918-n0qgtnjvtp9dnqsdtksmpbhsghjs8khi.apps.googleusercontent.com"
-client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
-
-flow = Flow.from_client_secrets_file(
-    client_secrets_file=client_secrets_file,
-    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
-    redirect_uri="http://127.0.0.1:5000/callback"
-)
-
-
+"""HTTP LOGIN"""
+#app.secret_key = "CodeSpecialist.com"
 def login_is_required(function):
     def wrapper(*args, **kwargs):
         if "google_id" not in session:
@@ -89,17 +83,40 @@ def protected_area():
     return render_template("put_image.html")
 
 
-"""@app.route('/upload', methods=['POST'])
-def upload_file():
-    print('entraste aqui')
-    if 'file' not in request.files:
-        return redirect(request.url)
-    file = request.files['file']
-    if file:
-        filename = secure_filename(file.filename)
-        file.save(filename)
-        analyze_image(filename)
-        return redirect(url_for('uploaded_file', filename=filename))
-"""
-if __name__ == '__main__':
-    app.run(debug=True)
+
+"""FACE"""
+
+@app.route('/analyze', methods=['GET','POST'] )
+def analyze():#guardar las imagenes que se manden a la base de datos
+    if request.method == 'GET':
+        print('entro get')
+        return render_template('put_image.html')
+    else:
+        try:
+            print('entro en post')
+            data = request.form.get('image', None)
+            print(data)
+            if data is None:
+                raise ValueError('No image provided')
+
+            img_data = base64.b64decode(data)
+            img = cv2.imdecode(np.frombuffer(img_data, np.uint8), -1)
+
+            # Configura enforce_detection a False para evitar errores si no se detecta una cara
+            analisis = DeepFace.analyze(img_path=img, actions=["gender", "emotion", "age","race"], enforce_detection=False)
+            print(analisis)
+            """
+                GUARDAR LAS IMAGENES CON SUS ANALISIS -
+                {imagenes
+                id_img: creciend
+                vec_img:
+                usur_id:
+                analisis:{...}
+            } 
+            """
+                
+            return jsonify({'analysis': analisis})#analisis json
+
+        except Exception as e:
+            return jsonify({'message': str(e)}), 400
+"""Cierre"""

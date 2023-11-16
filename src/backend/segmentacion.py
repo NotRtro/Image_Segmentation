@@ -1,6 +1,5 @@
-from flask import Flask, request, jsonify, render_template
-import cv2
-from src.backend.login import *
+from librerias import *
+from app.routes.login import app
 
 prototxt = "MobileNetSSD_deploy.prototxt.txt"
 model = "MobileNetSSD_deploy.caffemodel"

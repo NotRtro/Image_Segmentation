@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import openai
-from src.backend.login import app
+from login import app
 
 openai.api_key = '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'
 
