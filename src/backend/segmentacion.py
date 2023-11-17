@@ -1,8 +1,6 @@
 from librerias import *
 from app.routes.login import app
 
-prototxt = "MobileNetSSD_deploy.prototxt.txt"
-model = "MobileNetSSD_deploy.caffemodel"
 
 #Labels of network.
 classes = { 0: 'background',

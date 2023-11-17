@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="{{url_for('procesar_seg')}}" method="post" enctype="multipart/form-data">
+        <!-- Permitir la selección de múltiples archivos -->
+        <label for="lista_numeros">Ingrese números (separados por comas):</label>
+        <input type="text" id="lista_numeros" name="lista_numeros" required> 
+        
+        <input type="file" name="images[]" accept="image/*" multiple required>
+        
+        <!-- Mostrar una vista previa de la imagen seleccionada -->
+        <div id="image-preview"></div>
+
+        <!-- Botón para enviar el formulario -->
+        <button>Enviar</button>
+    </form>
+
+    <script>
+        // Mostrar una vista previa de la imagen seleccionada
+    
+        document.querySelector('input[type="file"]').addEventListener('change', function() {
+            const preview = document.getElementById('image-preview');
+            preview.innerHTML = '';
+    
+            for (const file of this.files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100%';
+                    img.style.margin = '10px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            }
+            //console.log()
+        });
+    </script>
+</body>
+
+</html>
