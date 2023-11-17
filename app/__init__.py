@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 """para login"""
 import os
 import pathlib
@@ -8,6 +9,7 @@ from google_auth_oauthlib.flow import Flow
 
 """para login"""
 app=Flask(__name__)
+cors = CORS(app)
 app.secret_key = "CodeSpecialist.com"
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 GOOGLE_CLIENT_ID = "1053211312918-n0qgtnjvtp9dnqsdtksmpbhsghjs8khi.apps.googleusercontent.com"

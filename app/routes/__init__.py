@@ -1,6 +1,6 @@
 from flask import request, jsonify, render_template, session,abort, redirect,url_for
 from contro_mongo import *
-
+import json
 """para login"""
 import requests
 from google.oauth2 import id_token
@@ -84,21 +84,26 @@ def index():
 @app.route("/protected_area")
 @login_is_required
 def protected_area():
+    # go home
+    # pasar img del usuario
     return render_template("put_image.html")
+
+
+'''
+- route para el login
+
+'''
 
 
 
 """FACE"""
-
+# seleccionar una opcion para el analisis de caras (una o multiples, rutas para cada una)
 @app.route('/analyze', methods=['GET','POST'])
 def analyze():
     if request.method == 'GET':
-        print('entro get')
         return render_template('put_image.html')
     else:
-        print('entro en post')
         data = request.files.getlist('image')
-        print(data, type(data))
         if data is None:
             raise ValueError('No image provided')
 
@@ -110,13 +115,11 @@ def analyze():
 
         # Analizar la imagen con DeepFace
         analisis = DeepFace.analyze(image_np, actions=["gender", "emotion", "age", "race"], enforce_detection=False)
-        print('llega aca')
         dic = {}
         dic['Genero'] = analisis[0]['dominant_gender']
         dic['Emocion'] = analisis[0]['dominant_emotion']
         dic['Edad'] = str(analisis[0]['age'])
         dic['Rasgos'] = analisis[0]['dominant_race']
-        print(dic)
         """
         GUARDAR LAS IMAGENES CON SUS ANALISIS -
         {imagenes
@@ -143,22 +146,18 @@ def analyze():
 @app.route('/procesar_seg', methods=['GET','POST'])
 def procesar_seg():
     if request.method == 'GET':
-        print('entro get')
         return render_template('segmentation.html')
     else:
-        print("entro_procesar")
+        # 3 post: imagenes, selected_classes (numeros separados por coma), title (tematica)
         #selected_classes = request.form.get('images[]',[])
+
         imagenes = request.files.getlist('images[]')
-        print(imagenes)
-        selected_classes=request.form.get('lista_numeros','')
-        selected_classes = [int(num) for num in selected_classes.split(',') if num.strip()]
-        print(selected_classes)
-        #selected_classes 
+        selected_classes_json = request.form['selected_classes']  # Get the JSON string from the form data
+        selected_classes = json.loads(selected_classes_json)  # Parse the JSON string into a list
+        selected_title = request.form.get('title','') # opcional
         
         for im in imagenes:
-            print(im)
             if im.filename == '':
-                print('No selected file')
                 return redirect(request.url)
 
             filename = im.filename
@@ -173,10 +172,12 @@ def procesar_seg():
             
             image_resized =cv2.resize(image_np, (300, 300))
             blob = cv2.dnn.blobFromImage(image_resized, 0.007843, (300,300), (127.5, 127.5, 127.5))
-            print("blob.shape:",blob.shape)
             net.setInput(blob)
             detections = net.forward() 
+            # matrix de imagenes segmentadas 'segmentacion'
             result = []
+            # diccionario para labels que aumente por cada objeto encontrado
+
             for detection in detections[0][0]:
                 if  detection[2]>0.45:
                     label_index = int(detection[1])
@@ -200,6 +201,8 @@ def procesar_seg():
                         }
                         
                         """
-            
-        return '<h1>Procesado</h1>'
+        # mostrar cuanto falta del procesamiento
+        # se han encontrado 4 carros........
+        print(result)
+        return jsonify({'message': 'success'},{'result':result }), 200
 """cierre"""
