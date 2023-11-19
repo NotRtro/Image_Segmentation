@@ -1,5 +1,6 @@
 from flask import request, jsonify, render_template, session,abort, redirect,url_for
 from contro_mongo import *
+from temp import generateCamp
 import json
 """para login"""
 import requests
@@ -31,6 +32,23 @@ def login_is_required(function):
             return function()
 
     return wrapper
+
+def get_main_colors(imagenes, n_colors):
+    result = []
+    for i in imagenes:
+        image = cv2.imdecode(i, cv2.IMREAD_COLOR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = image.reshape(-1, 3)
+
+        kmeans = KMeans(n_clusters=n_colors)
+        labels = kmeans.fit_predict(image)  
+
+        counts = np.bincount(labels)
+        colors = kmeans.cluster_centers_
+
+        main_colors = (result.append(colors[i].astype(int)) for i in range(n_colors))
+    return result
+
 
 
 @app.route("/login")
@@ -149,16 +167,17 @@ def procesar_seg():
         return render_template('segmentation.html')
     else:
         # 3 post: imagenes, selected_classes (numeros separados por coma), title (tematica)
-        #selected_classes = request.form.get('images[]',[])
-
         imagenes = request.files.getlist('images[]')
-        print(imagenes)
-        selected_classes_json = request.form['selected_classes']  # Get the JSON string from the form data
-        selected_classes = json.loads(selected_classes_json)  # Parse the JSON string into a list
+        #selected_classes_json = request.form['selected_classes']  # Get the JSON string from the form data
+        #selected_classes = json.loads(selected_classes_json)  # Parse the JSON string into a list
+        #selected_classes = [int(class_id) for class_id in selected_classes if class_id.isdigit() and int(class_id) in classes]
+        selected_classes = request.form.get('classes','')
+        # pasar a lista y quitarle las comas
+        selected_classes = selected_classes.split(',')
         selected_classes = [int(class_id) for class_id in selected_classes if class_id.isdigit() and int(class_id) in classes]
-        print(selected_classes)
-        selected_title = request.form.get('title','') # opcional
-        print(selected_title)
+        selected_title = request.form.get('tematica','') # opcional
+        selected_caracteristicas = request.form.get('caracteristicas','') # opcional
+        selected_rubro = request.form.get('rubro','') # opcional
         labels = {}
         for im in imagenes:
             if im.filename == '':
@@ -185,7 +204,10 @@ def procesar_seg():
                 if  detection[2]>0.45:
                     label_index = int(detection[1])
                     if label_index in selected_classes:
-                        labels[label]=classes[label_index]
+                        if classes[label_index] not in labels:
+                            labels[classes[label_index]] = 0
+                        print("clase encontrada", classes[label_index])
+                        labels[classes[label_index]] = labels[classes[label_index]]+1
                         box = detection[3:7] * [width, height, width, height]
                         x_start, y_start, x_end, y_end = int(box[0]), int(box[1]), int(box[2]), int(box[3])                       
                         image_np2 = np.array(image)
@@ -203,11 +225,15 @@ def procesar_seg():
                             caracteristicas...
                         }
                         
-                        """
+                        """     
+            print(labels)
+        campaign = generateCamp(selected_caracteristicas, selected_title, selected_rubro)
+
         # mostrar cuanto falta del procesamiento
         # se han encontrado 4 carros........
-        print(result)
-        image = (base64.b64encode(Image.open(BytesIO(i.read()))) for i in imagenes)
-        caracteristicas = get_main_colors(result, 3)
-        return jsonify({'message': 'success'},{'result':result }), 200
+        
+        #image = (base64.b64encode(Image.open(BytesIO(i.read()))) for i in imagenes)
+        #colors = get_main_colors(result, 3)
+        #print(colors)
+        return jsonify({'message': 'success'},{'result':labels }, {'campaign':campaign}), 200
 """cierre"""
