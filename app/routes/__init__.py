@@ -1,6 +1,6 @@
 from flask import request, jsonify, render_template, session,abort, redirect,url_for
 from contro_mongo import *
-from temp import generateCamp
+from temp import *
 import json
 """para login"""
 import requests
@@ -104,7 +104,7 @@ def index():
 def protected_area():
     # go home
     # pasar img del usuario
-    return render_template("put_image.html")
+    return redirect("http://localhost:8081/")
 
 
 '''
@@ -158,16 +158,17 @@ def analyze():
         #    return jsonify({'message': str(e)}), 400
 """Cierre"""
 
-
-
 """para Segmentation"""
 @app.route('/procesar_seg', methods=['GET','POST'])
 def procesar_seg():
     if request.method == 'GET':
         return render_template('segmentation.html')
     else:
-        # 3 post: imagenes, selected_classes (numeros separados por coma), title (tematica)
         imagenes = request.files.getlist('images[]')
+        '''usuario = request.form.get('user','')'''
+        # guardar imagenes en la base de datos con el usuario
+        # 
+
         #selected_classes_json = request.form['selected_classes']  # Get the JSON string from the form data
         #selected_classes = json.loads(selected_classes_json)  # Parse the JSON string into a list
         #selected_classes = [int(class_id) for class_id in selected_classes if class_id.isdigit() and int(class_id) in classes]
@@ -176,9 +177,11 @@ def procesar_seg():
         selected_classes = selected_classes.split(',')
         selected_classes = [int(class_id) for class_id in selected_classes if class_id.isdigit() and int(class_id) in classes]
         selected_title = request.form.get('tematica','') # opcional
-        selected_caracteristicas = request.form.get('caracteristicas','') # opcional
+        selected_detalles = request.form.get('detalles','') # opcional
         selected_rubro = request.form.get('rubro','') # opcional
         labels = {}
+        result = []
+        print(imagenes)
         for im in imagenes:
             if im.filename == '':
                 return redirect(request.url)
@@ -198,7 +201,7 @@ def procesar_seg():
             net.setInput(blob)
             detections = net.forward() 
             # matrix de imagenes segmentadas 'segmentacion'
-            result = []
+            
             # diccionario para labels que aumente por cada objeto encontrado
             for detection in detections[0][0]:
                 if  detection[2]>0.45:
@@ -207,7 +210,7 @@ def procesar_seg():
                         if classes[label_index] not in labels:
                             labels[classes[label_index]] = 0
                         print("clase encontrada", classes[label_index])
-                        labels[classes[label_index]] = labels[classes[label_index]]+1
+                        labels[classes[label_index]]+=1
                         box = detection[3:7] * [width, height, width, height]
                         x_start, y_start, x_end, y_end = int(box[0]), int(box[1]), int(box[2]), int(box[3])                       
                         image_np2 = np.array(image)
@@ -215,19 +218,27 @@ def procesar_seg():
                         roi = image_np2[y_start:y_end, x_start:x_end]
                         
                         #result.append(roi.flatten())
-                        result.append(roi.flatten())
-                        """"ENVIAR TODO EL RESULTADO A LA BASE DE DATOS
+                        result.append(np.array(roi))
+                        """
+                        ENVIAR TODO EL RESULTADO A LA BASE DE DATOS
+                        dame todos las campañas del correo
                         {
-                            user_id:
+                            user_id: usuario1+','+titulo_campaña
                             title:del front
                             images:[np_array]
                             result:
                             caracteristicas...
                         }
-                        
                         """     
             print(labels)
-        campaign = generateCamp(selected_caracteristicas, selected_title, selected_rubro)
+            
+
+
+        selected_keyword = getKeywors(selected_detalles)
+        selected_caracteristicas = get_main_colors(result, 3)
+        selected_recurrencias = dezglozardic(labels)
+        campaign = generateCamp(selected_caracteristicas, selected_title, selected_rubro, selected_recurrencias, selected_keyword)
+        image = buscar_imagenes(selected_title)[0]['link']
 
         # mostrar cuanto falta del procesamiento
         # se han encontrado 4 carros........
@@ -235,5 +246,5 @@ def procesar_seg():
         #image = (base64.b64encode(Image.open(BytesIO(i.read()))) for i in imagenes)
         #colors = get_main_colors(result, 3)
         #print(colors)
-        return jsonify({'message': 'success'},{'result':labels }, {'campaign':campaign}), 200
+        return jsonify({'message': 'success'},{'result':labels }, {'campaign':campaign}, {'image':image}), 200
 """cierre"""
