@@ -9,8 +9,8 @@ import numpy as np
 import cv2
 import requests
 
-API_KEY = ''
-CX = ''  # Puedes configurar esto al crear tu motor de búsqueda personalizado
+API_KEY = 'AIzaSyCJv3vyFYKSjxczFtTnGb7vuZvYj6OSQbY'
+CX = '31b7410374d974eb9'  # Puedes configurar esto al crear tu motor de búsqueda personalizado
 
 def buscar_imagenes(query):
     
@@ -32,6 +32,7 @@ def get_main_colors(imagenes, n_colors):
     result = []
     for i in imagenes:
         #image = cv2.imdecode(i, cv2.IMREAD_COLOR)
+        
         image = cv2.cvtColor(i, cv2.COLOR_BGR2RGB)
         image = image.reshape(-1, 3)
 
@@ -55,7 +56,7 @@ def rgb_to_name(rgb_color):
         color_name = webcolors.rgb_to_hex(rgb_color)
     return color_name
 
-client = OpenAI(api_key='')
+client = OpenAI(api_key='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')
 
 
 

@@ -33,7 +33,7 @@ def login_is_required(function):
 
     return wrapper
 
-def get_main_colors(imagenes, n_colors):
+"""def get_main_colors(imagenes, n_colors):
     result = []
     for i in imagenes:
         image = cv2.imdecode(i, cv2.IMREAD_COLOR)
@@ -47,7 +47,7 @@ def get_main_colors(imagenes, n_colors):
         colors = kmeans.cluster_centers_
 
         main_colors = (result.append(colors[i].astype(int)) for i in range(n_colors))
-    return result
+    return result"""
 
 
 
@@ -193,6 +193,7 @@ def procesar_seg():
             # Ejemplo: Abrir la imagen con Pillow y cambiar su tamaño
             image = Image.open(BytesIO(file_data))
             image_np = np.array(image)
+            #result.append(image)
 
             height, width = image.size
             
@@ -218,11 +219,11 @@ def procesar_seg():
                         roi = image_np2[y_start:y_end, x_start:x_end]
                         
                         #result.append(roi.flatten())
-                        result.append(np.array(roi))
+                        result.append(roi)
                         """
                         ENVIAR TODO EL RESULTADO A LA BASE DE DATOS
                         dame todos las campañas del correo
-                        {
+     S                   {
                             user_id: usuario1+','+titulo_campaña
                             title:del front
                             images:[np_array]
