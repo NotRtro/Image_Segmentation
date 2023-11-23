@@ -104,7 +104,7 @@ def index():
 def protected_area():
     # go home
     # pasar img del usuario
-    return redirect("http://localhost:8081/")
+    return redirect("http://localhost:8080/")
 
 
 '''
@@ -164,6 +164,7 @@ def procesar_seg():
     if request.method == 'GET':
         return render_template('segmentation.html')
     else:
+        print(request.files)
         imagenes = request.files.getlist('images[]')
         '''usuario = request.form.get('user','')'''
         # guardar imagenes en la base de datos con el usuario
@@ -181,11 +182,10 @@ def procesar_seg():
         selected_rubro = request.form.get('rubro','') # opcional
         labels = {}
         result = []
-        print(imagenes)
         for im in imagenes:
             if im.filename == '':
+                print('No selected file')
                 return redirect(request.url)
-
             filename = im.filename
             content_type = im.content_type
             file_data = im.read()  # Lee los datos del archivo en formato bytes
@@ -231,8 +231,6 @@ def procesar_seg():
                         }
                         """     
             print(labels)
-            
-
 
         selected_keyword = getKeywors(selected_detalles)
         selected_caracteristicas = get_main_colors(result, 3)

@@ -75,14 +75,14 @@ def generateCamp(caracteristicas, title, rubro, recurrencias, keyword):
     teniendo en cuenta que haciendo un análisis de los alrededores de mi negocio tanto en las personas 
     que pasan por mi negocio, y como son los alrededores de este, tenemos en cuenta que la mayoria de clientes tienen 
     caracteristicas principales captados como {recurrencias}, y nuestro negocio tiene caracteristicas como {keyword}, 
-    teniendo en cuenta que estas detonan colores principales dentro de los clientes como {caracteristicas} y que la temática es {title}"""# Fixed the formatting of the string
+    teniendo en cuenta que estas detonan colores principales dentro de los clientes como {caracteristicas} y que la temática es {title}. """# Fixed the formatting of the string
     
     response = client.chat.completions.create(model = "gpt-4-1106-preview",
     messages=[
         {"role": "system", "content": """Eres un asistente de marketing que ayuda a 
                                         las personas a crear campañas publicitarias para 
                                         sus negocios con ideas creativas y factibles. 
-                                        Retornas unJSON con los keys DESCRIPCION, NOMBRES, COLABORACIONES, IDEAS.
+                                        Retornas un JSON con los keys DESCRIPCION, NOMBRES, COLABORACIONES, IDEAS, los values deben ser solo texto limpio 
                                         no me des mas texto que el json, sin puntuaciones ni el ```json que pones al inicio y al final
                                         """},
         {"role": "user", "content": '1. Que ideas para campañas me recomiendas usar para ' + data + ' 2. Que nombres para una campaña puedo ponerle con la tematica' + title},
