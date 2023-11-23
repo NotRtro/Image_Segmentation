@@ -234,7 +234,7 @@ def procesar_seg():
             print(labels)
 
         selected_keyword = getKeywors(selected_detalles)
-        selected_caracteristicas = get_main_colors(result, 3)
+        selected_caracteristicas, selected_all = get_main_colors(result, 3)
         selected_recurrencias = dezglozardic(labels)
         campaign = generateCamp(selected_caracteristicas, selected_title, selected_rubro, selected_recurrencias, selected_keyword)
         image = buscar_imagenes(selected_title)[0]['link']
