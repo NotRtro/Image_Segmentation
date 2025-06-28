@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 import openai
 from login import app
 
-openai.api_key = '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'
+openai.api_key = 'key'
 
 @app.route('/final', methods = ['GET', 'POST'])
 def generateCamp():
