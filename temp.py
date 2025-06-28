@@ -9,8 +9,8 @@ import numpy as np
 import cv2
 import requests
 
-API_KEY = 'AIzaSyCJv3vyFYKSjxczFtTnGb7vuZvYj6OSQbY'
-CX = '31b7410374d974eb9'  # Puedes configurar esto al crear tu motor de búsqueda personalizado
+API_KEY = 'key'
+CX = 'key'  # Puedes configurar esto al crear tu motor de búsqueda personalizado
 
 def buscar_imagenes(query):
     
